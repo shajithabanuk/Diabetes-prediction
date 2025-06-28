@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+
+df = pd.read_csv(r"C:/Users/ADMIN/Downloads/hearts.csv")
+print(df)
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['Sex'] = le.fit_transform(df['Sex'])
+df['ChestPainType'] = le.fit_transform(df["ChestPainType"])
+df["RestingECG"] = le.fit_transform(df["RestingECG"])
+df['ExerciseAngina'] = le.fit_transform(df['ExerciseAngina'])
+df['ST_Slope'] = le.fit_transform(df['ST_Slope'])
+print(df)
+
+##x = df.drop(columns=['HeartDisease'])
+x = df.drop(columns = ['HeartDisease'])
+y = df['HeartDisease']
+print("xxxxxxxxx",x)
+print("yyyyyy",y)
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.2, random_state = 12)
+
+
+print("DF", df.shape)
+print("x_train",x_train.shape)
+print("x_test",x_test.shape)
+print("y_train", y_train.shape)
+print("y_test", y_test.shape)
+
+from sklearn.naive_bayes import GaussianNB
+NB = GaussianNB()
+
+NB.fit(x_train,y_train)
+
+y_pred = NB.predict(x_test)
+print("y_pred",y_pred)
+print("y_test", y_test)
+
+from sklearn.metrics import accuracy_score
+print('ACCURACY is',accuracy_score(y_test,y_pred))
+
+testprediction = NB.predict([[100,1,0,150,150,1,1,180,0,1,0]])
+if testprediction ==1:
+    print("The Patient Have Heart Disease,please consult the Doctor")
+else:
+    print("The patient NormalS")
